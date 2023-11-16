@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
@@ -12,8 +13,14 @@
 
 typedef unsigned char u_char;
 
+typedef char BOOL;
+
 #define STR_MAX 0x7fffffff
 
+#ifdef __NO_USE_TIME
+#define __COMMON_NO_TIME
+#endif
+#ifndef __NO_USE_TIME
 #pragma region "Time"
 
 enum {
@@ -48,6 +55,7 @@ void wait(double seconds);
 void waitms(double ms);
 
 #pragma endregion "Time"
+#endif
 
 #pragma region "AVL"
 
@@ -171,6 +179,11 @@ char *utf8_tostring(int utf8);
 
 #pragma endregion "String"
 
+typedef struct buffer_s {
+	char					*data;
+	long					size;
+} buffer_t;
+
 char *io_fixhome(const char *path);
 
 char io_direxists(const char *path);
@@ -178,6 +191,8 @@ char io_direxists(const char *path);
 char io_exists(const char *path);
 
 void io_mkdir(const char *path);
+
+buffer_t io_read(const char *path);
 
 double minf(double x, double y);
 

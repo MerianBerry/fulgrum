@@ -56,21 +56,21 @@ int utf8_encode(int utf) {
   int out = 0;
   // 4 byte
   if (utf > 0xffff) {
-    u_char one = 0b11110<<3 | utf>>18&0x7;
-    u_char two = 0b10<<6 | utf>>12&0x3f;
-    u_char tre = 0b10<<6 | utf>>6&0x3f;
-    u_char qua = 0b10<<6 | utf&0x3f;
+    u_char one = 30<<3 | utf>>18&0x7;
+    u_char two = 2<<6 | utf>>12&0x3f;
+    u_char tre = 2<<6 | utf>>6&0x3f;
+    u_char qua = 2<<6 | utf&0x3f;
     out = one | two<<8 | tre<<16 | qua<<24;
   } // 3 byte
   else if (utf > 0x7ff) {
-    u_char one = 0b1110<<4 | utf>>12&0xf;
-    u_char two = 0b10<<6 | utf>>6&0x3f;
-    u_char tre = 0b10<<6 | utf&0x3f;
+    u_char one = 14<<4 | utf>>12&0xf;
+    u_char two = 2<<6 | utf>>6&0x3f;
+    u_char tre = 2<<6 | utf&0x3f;
     out = one | two<<8 | tre << 16;
   } // 2 byte
   else if (utf > 0x7f) {
-    u_char one = 0b110<<5 | utf>>6&0x1f;
-    u_char two = 0b10<<6 | utf&0x3f;
+    u_char one = 6<<5 | utf>>6&0x1f;
+    u_char two = 2<<6 | utf&0x3f;
     out = one | two << 8;
   } // 1 byte
   else {
