@@ -6,7 +6,7 @@ s0 := build/s0
 
 s0_source_files := $(wildcard src/bootstrap/s0/*.c)
 s0_object_files := $(patsubst src/bootstrap/s0/*.c, src/bootstrap/%.o, $(s0_source_files))
-s1_source_files := $(wildcard src/bootstrap/s1/*.bl)
+s1_source_files := $(wildcard src/bootstrap/s1/*.ful)
 
 .PHONY: all clean s0 run s0
 
@@ -25,5 +25,5 @@ s0: $(s0_source_files)
 s1 : s0 $(s1_source_files)
 	@printf '[1/2]$(bold_green)Building boostrap compiler stage 1$(reset)\n'
 #	@sleep 1s
-	@$(s0) $(s1_source_files)
+	@$(s0) src/bootstrap/s1/*.ful
 	@printf '[2/2]$(bold_cyan)Done building s1 compiler$(reset)\n'
