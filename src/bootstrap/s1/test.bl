@@ -1,1 +1,1 @@
-var myvar = "Hello"
+var myvar: string = "Hello"

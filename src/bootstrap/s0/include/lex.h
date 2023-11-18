@@ -5,7 +5,7 @@
 
 #define MAKE_KEYWORD(word) {#word, tk_ ##word}
 
-typedef struct {
+typedef struct lexer_s {
   const char*   content;
   char*         ident;
   token_t*      tokenv;

@@ -19,7 +19,7 @@ s0: $(s0_source_files)
 # compile s0 C files
 	@mkdir -p $(shell dirname $(s0))
 	@printf '[0/2]$(bold_green)Building boostrap compiler stage 0$(reset)\n'
-	@gcc -std=c99 -Wpedantic $(s0_source_files) -o $(s0)
+	@gcc -std=c99 $(s0_source_files) -o $(s0)
 	@printf '[1/2]$(bold_cyan)Done building s0 compiler$(reset)\n'
 
 s1 : s0 $(s1_source_files)

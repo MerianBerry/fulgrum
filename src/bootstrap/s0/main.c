@@ -28,5 +28,6 @@ int main(int argc, char **argv) {
   /*printf("\033[1A");
   printf("\033[K");*/
   free(content.data);
+  free(l.tokenv);
   return 0;
 }
