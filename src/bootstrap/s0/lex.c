@@ -1,6 +1,7 @@
 #include "include/lex.h"
 #include <ctype.h>
 #include <stdio.h>
+#define NO_DIRENT
 #include "include/common.h"
 
 #define BRTBRED "\x1B[91;1m"
@@ -72,7 +73,7 @@ void lx_addtk(lexer_t* lexer, short tk) {
   ++lexer->tokenc;
 }
 
-BOOL lx_alpha(lexer_t* lexer) {
+char lx_alpha(lexer_t* lexer) {
   const keyword_t keywords[] = {
     MAKE_KEYWORD(var),
     MAKE_KEYWORD(func),
@@ -104,7 +105,7 @@ BOOL lx_alpha(lexer_t* lexer) {
   return 1;
 }
 
-BOOL lx_oper(lexer_t* lexer) {
+char lx_oper(lexer_t* lexer) {
   do {
     lx_save(lexer);
     lx_next(lexer);
@@ -113,7 +114,7 @@ BOOL lx_oper(lexer_t* lexer) {
   return 1;
 }
 
-BOOL lx_string(lexer_t* lexer) {
+char lx_string(lexer_t* lexer) {
   int q = lexer->cc;
   lx_next(lexer);
   while (lexer->cc != q && noteof(lexer->cc)) {
@@ -133,7 +134,7 @@ BOOL lx_string(lexer_t* lexer) {
   return 1;
 }
 
-BOOL lx_comment(lexer_t* lexer) {
+char lx_comment(lexer_t* lexer) {
   int c = lx_peek(lexer, 1);
   if (c == '-') {
     while (!isnewline(lexer->cc) && noteof(lexer->cc)) {
@@ -155,7 +156,7 @@ BOOL lx_comment(lexer_t* lexer) {
   }
 }
 
-BOOL lx_number(lexer_t* lexer) {
+char lx_number(lexer_t* lexer) {
   char dotex = '.';
   do {
     if (lexer->cc == '.')

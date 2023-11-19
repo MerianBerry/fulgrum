@@ -1,3 +1,4 @@
+#define NO_DIRENT
 #include "include/common.h"
 #include <stdio.h>
 

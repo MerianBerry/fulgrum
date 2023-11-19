@@ -12,8 +12,6 @@
 
 typedef unsigned char u_char;
 
-typedef char BOOL;
-
 #define STR_MAX 0x7fffffff
 
 #ifdef __NO_USE_TIME

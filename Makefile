@@ -9,18 +9,13 @@ s0_source_files := $(wildcard src/bootstrap/s0/*.c)
 s0_object_files := $(patsubst src/bootstrap/s0/*.c, src/bootstrap/%.o, $(s0_source_files))
 s1_source_files := $(wildcard src/bootstrap/s1/*.ful)
 
-ifeq ($(OS), WINDOWS_NT)
+ifeq ($(OS), Windows_NT)
 	HOST := Windows
 	@mkdir := mkdir $(subst /,\,${1}) > nul 2>&1 || (exit 0)
-define color
-endef
 else
 	HOST := $(shell uname -s)
 define mkdir
 $(shell mkdir -p ${1})
-endef
-define color
-@printf ${1}
 endef
 endif
 

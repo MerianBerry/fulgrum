@@ -1,4 +1,5 @@
 #include <stdio.h>
+#define NO_DIRENT
 #include "bootstrap/s0/include/common.h"
 
 char escapec(char c) {
