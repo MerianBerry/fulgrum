@@ -38,13 +38,13 @@ clean:
 ccolor: src/ccolor.c src/bootstrap/s0/string.c
 	$(call mkdir, build)
 	@echo [0/3]Building color util 
-	@gcc -std=gnu99 src/ccolor.c src/bootstrap/s0/string.c -o $(ccolor)
+	@gcc -std=gnu99 -Wno-overflow src/ccolor.c src/bootstrap/s0/string.c -o $(ccolor)
 	@echo [1/3]Done building color util
 
 # Compile s0 C files
 s0: ccolor $(s0_source_files)
 	@$(ccolor) "[1/3]%c(magenta)Build bootstrap compiler stage 0\n%c(reset)"
-	@gcc -std=gnu99 -lc $(s0_source_files) -o $(s0)
+	@gcc -std=gnu99 -Wno-overflow -lc $(s0_source_files) -o $(s0)
 	@$(ccolor) "[2/3]%c(bright_green)Done building s0 compiler\n%c(reset)"
 
 # Compile s1 Fulgra files

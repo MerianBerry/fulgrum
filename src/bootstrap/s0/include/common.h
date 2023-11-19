@@ -185,14 +185,17 @@ typedef struct buffer_s {
 	long					size;
 } buffer_t;
 
-#if __unix__
+#if __unix__ & !defined(NO_DIRENT)
 #include <dirent.h>
-#elif _WIN32
+#elif _WIN32 & !defined(NO_DIRENT)
 #include "windows/dirent.h"
 #endif
 
+#ifndef NO_DIRENT
+#define USE_DIRENT
 typedef struct dirent dirent_t;
 int io_scandir(const char* dir, dirent_t*** pList, int* pCount);
+#endif
 
 char *io_fixhome(const char *path);
 

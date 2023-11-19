@@ -26,15 +26,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-
-#ifdef _WIN32
-
-#endif
-
-#ifdef __unix__
-
-typedef struct stat stat_t;
-
+#ifdef USE_DIRENT
 int io_scandir(const char* dir, dirent_t*** pList, int* pCount) {
   DIR *d;
   int count = scandir(dir, pList, NULL, NULL)-1;
@@ -43,6 +35,16 @@ int io_scandir(const char* dir, dirent_t*** pList, int* pCount) {
   (*pCount) = count;
   return 1;
 }
+
+#endif
+#ifdef _WIN32
+
+#endif
+
+#ifdef __unix__
+
+
+typedef struct stat stat_t;
 
 char *io_fixhome(const char *path) {
   char *var = getenv("HOME");

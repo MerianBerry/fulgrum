@@ -1,6 +1,6 @@
 <h1>
   <center>
-  Blossom
+  Fulgra
   </center>
 </h1>
 
@@ -134,7 +134,7 @@ float from classA: 3.14000
 
 ### Typing
 
-Blossom is a strongly typed language, with inferred types, and static type checking.
+Fulgra is a strongly typed language, with inferred types, and static type checking.
 
 The idea of typing revolves around conformity. All variables conform to their possible value types, unless the variable forces type parity with its value. If the variable forces type parity, and any value that is set to that variable can't match the expected type, then an error will occur.
 
@@ -144,7 +144,7 @@ This system will be able to produce weak-like typing, without any runtime checks
 
 Classes have whats called "infer functions", which are functions that can be used to convert the class data into another type. Infer functions are explicitly defined by the user, and do not modify the data of the value that they are associated with, unless explicitly defined to do so by the user.
 
-Vectors will have one amalgam type. Each element will be a part of this amalgam type if possible. The element with the largest type size will be used for each element type size. This means if you have a vector of integers, but have a class the size of 20 bytes, each element type will be 20 bytes in size. While this can increase memory usage, it isnt a big issue in modern systems. But if memory usage is a big deal, Blossom supplies ways to define the vector element type.
+Vectors will have one amalgam type. Each element will be a part of this amalgam type if possible. The element with the largest type size will be used for each element type size. This means if you have a vector of integers, but have a class the size of 20 bytes, each element type will be 20 bytes in size. While this can increase memory usage, it isnt a big issue in modern systems. But if memory usage is a big deal, Fulgra supplies ways to define the vector element type.
 
 ```js
 func main(argc: int, argv: list(string)) => int {
