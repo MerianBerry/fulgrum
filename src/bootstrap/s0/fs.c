@@ -23,15 +23,26 @@
     }
   }
   free(list);*/
+#include <sys/stat.h>
+#include <stdio.h>
+
+
+#ifdef _WIN32
+
+#endif
 
 #ifdef __unix__
-#include <unistd.h>
-#include <sys/select.h>
-#include <sys/stat.h>
-#include <dirent.h>
 
-typedef struct dirent dirent_t;
 typedef struct stat stat_t;
+
+int io_scandir(const char* dir, dirent_t*** pList, int* pCount) {
+  DIR *d;
+  int count = scandir(dir, pList, NULL, NULL)-1;
+  if (count<0)
+    return 0;
+  (*pCount) = count;
+  return 1;
+}
 
 char *io_fixhome(const char *path) {
   char *var = getenv("HOME");

@@ -1,4 +1,5 @@
 #include "include/common.h"
+#include <stdio.h>
 
 #if !defined(MAX)
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
@@ -32,14 +33,14 @@ char *str_add(char * lhs, const char * rhs)
 	return buf;
 }
 
-const char *str_substr(const char * src,
+char *str_substr(const char * src,
 	size_t off, size_t len)
 {
 	assert(!(off > strlen(src)-1) && "String out of bounds exception");
 
 	size_t size = MIN(strlen(src)-off, len)+1;
 	char *buf = (char*)malloc(size);
-
+  memset(buf, 0, size);
 	memcpy(buf, src + off, size-1);
 	return buf;
 }
@@ -65,8 +66,7 @@ size_t str_flo(const char * str, char c)
 }
 
 size_t str_flox(const char * str, const char *cs)
-{
-	
+{	
 	for (int i = strlen(str) - 1; i >= 0; --i) {
 		for (size_t i2 = 0; i2 < strlen(cs); ++i2) {
 			char c = cs[i2];
@@ -77,16 +77,19 @@ size_t str_flox(const char * str, const char *cs)
 	return npos;
 }
 
-size_t str_ffi(const char * str,
-	const char * cmp)
+size_t str_ffi(const char * str, const char * cmp)
 {
-	if (strlen(cmp) == 0)
-		return npos;
-	for (size_t i = 0; i < strlen(str) - (strlen(cmp)-1); ++i)
-	{
-		char *sub = (char*)str_substr(str, i, strlen(cmp));
-		if (strcmp(sub, cmp) == 0)
-		{
+	if (!str || !cmp) {
+    return npos;
+  }
+  const long l1 = strlen(str);
+  const long l2 = strlen(cmp);
+  //printf("\n\t%li : %li\n", l1, l2);
+  if (!l1 || !l2)
+    return npos;
+	for (size_t i = 0; i < l1 - (l2-1); ++i) {
+		char *sub = (char*)str_substr(str, i, l2);
+		if (!strcmp(sub, cmp)) {
 			free(sub);
 			return i;
 		}
@@ -105,7 +108,6 @@ size_t str_fli(const char * str,
 	if (s2>s1)
 		return npos;
 	for (int i = s1-(s2); i >= 0; --i) {
-		//printf("%lu : %lu\n", s1, i);
 		char *sub = (char*)str_substr(str, i, s2);
 		if (!strcmp(sub, cmp)) {
 			free(sub);
@@ -245,12 +247,13 @@ char *str_append(char *src, const char *nstr, size_t bytes)
 	const size_t l = src ? strlen(src) : 0;
 	const size_t l2 = MIN(strlen(nstr), bytes);
 	char *buf = malloc(l+l2+1);
+  memset(buf, 0, l+l2+1);
 	//memset(buf, 0, l+l2+1);
 	if (src) {
 		memcpy(buf, src, l);
 		free(src);
 	}
-	memcpy(((char*)buf)+l, nstr, l2+1);
+	memcpy(((char*)buf)+l, nstr, l2);
 	return buf;
 }
 
@@ -271,6 +274,93 @@ char *str_replace(const char *src, long off, long len, const char *str) {
   memcpy(nstr+off, str, MAX(l2, 0));
   memcpy(nstr+off+l2, src+off+len, MAX(l1-off-len, 0));
   return nstr;
+}
+
+char* str_colorfmt(const char *src, ...) {
+  va_list args;
+  va_start(args, src);
+
+  char* cpy = (char*)str_cpy(src, npos);
+  int itr = 0;
+  while (1) {
+    if (itr > 100) {
+      printf("\x1B[91;1mEmergency while loop abort at itr=%i\n\tstring: \"%s\"\n\x1B[0m", itr, cpy);
+      break;
+    }
+    size_t p = str_ffi(cpy, "%c");
+    if (p == npos)
+      break;
+    if (((p > 0 && cpy[p-1] != '\\') || !p) && cpy[p+2] == '(') {
+      size_t eb = str_ffo(cpy, ')');
+      char* color = (char*)str_substr(cpy, p+3, eb-(p+3));
+      if (color) {
+        char* ocolor = NULL;
+        switch (str_hash(color)) {
+          case 210707760194U:
+            ocolor = "\x1B[30m";
+          break;
+          case 14928609233751675713U:
+            ocolor = "\x1B[90m";
+          break;
+          case 193504576U:
+            ocolor = "\x1B[31m";
+          break;
+          case 8246139787930773631U:
+            ocolor = "\x1B[91m";
+          break;
+          case 210713909846U:
+            ocolor = "\x1B[32m";
+          break;
+          case 14928609233757825365U:
+            ocolor = "\x1B[92m";
+          break;
+          case 6954248304353U:
+            ocolor = "\x1B[33m";
+          break;
+          case 13028758798249174464U:
+            ocolor = "\x1B[93m";
+          break;
+          case 6385084301U:
+            ocolor = "\x1B[34m";
+          break;
+          case 13868195969781240492U:
+            ocolor = "\x1B[94m";
+          break;
+          case 229474533704194U:
+            ocolor = "\x1B[35m";
+          break;
+          case 5673926631242730689U:
+            ocolor = "\x1B[95m";
+          break;
+          case 6385133744U:
+            ocolor = "\x1B[36m";
+          break;
+          case 13868195969781289935U:
+            ocolor = "\x1B[96m";
+          break;
+          case 210726503048:
+            ocolor = "\x1B[0m";
+          break;
+        }
+        if (!ocolor) {
+          printf("\x1B[91mInvalid color name used. %s\n\x1B[0m", color);
+          ocolor = "";
+        }
+        free(color);
+        cpy = str_replace(cpy, p, eb-p+1, ocolor);
+      }
+    }
+    ++itr;
+  }
+  if (itr < 100) {
+    //printf("\n\t%s\n", cpy);
+    char* fmtstr = str_fmtv(cpy, args);
+    free(cpy);
+    va_end(args);
+    return fmtstr;
+  }
+  va_end(args);
+  return cpy;
 }
 
 #pragma endregion "Strings"

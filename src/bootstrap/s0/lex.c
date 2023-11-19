@@ -1,5 +1,6 @@
 #include "include/lex.h"
 #include <ctype.h>
+#include <stdio.h>
 #include "include/common.h"
 
 #define BRTBRED "\x1B[91;1m"

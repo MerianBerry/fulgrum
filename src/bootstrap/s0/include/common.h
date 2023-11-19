@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -124,7 +123,7 @@ avl_tree_t *avl_newtree();
 
 char *str_add(char * lhs, const char * rhs);
 
-const char *substr(const char * src,
+char *str_substr(const char * src,
 	size_t off, size_t len);
 
 size_t str_ffo(const char * str, char c);
@@ -158,6 +157,8 @@ char *str_append(char *src, const char *nstr, size_t bytes);
 */
 char *str_replace(const char *src, long off, long len, const char *str);
 
+char* str_colorfmt(const char *src, ...);
+
 int utf8_charsize(u_char c);
 
 long utf8_strlen(const char *str);
@@ -183,6 +184,15 @@ typedef struct buffer_s {
 	char					*data;
 	long					size;
 } buffer_t;
+
+#if __unix__
+#include <dirent.h>
+#elif _WIN32
+#include "windows/dirent.h"
+#endif
+
+typedef struct dirent dirent_t;
+int io_scandir(const char* dir, dirent_t*** pList, int* pCount);
 
 char *io_fixhome(const char *path);
 
