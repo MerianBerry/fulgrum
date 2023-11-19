@@ -237,6 +237,7 @@ const char *str_cpy(const char *src, size_t bytes)
 {
 	size_t len = MIN(strlen(src), bytes);
 	char *cpy = malloc(len+1);
+	memset(cpy, 0, len+1);
 	memcpy(cpy, src, len);
 	return cpy;
 }

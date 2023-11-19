@@ -29,7 +29,7 @@
 #ifdef USE_DIRENT
 int io_scandir(const char* dir, dirent_t*** pList, int* pCount) {
   DIR *d;
-  int count = scandir(dir, pList, NULL, NULL)-1;
+  int count = scandir(dir, pList, NULL, NULL);
   if (count<0)
     return 0;
   (*pCount) = count;
@@ -38,24 +38,26 @@ int io_scandir(const char* dir, dirent_t*** pList, int* pCount) {
 
 #endif
 #ifdef _WIN32
-
+#include <WinBase.h>
 #endif
-
-#ifdef __unix__
 
 
 typedef struct stat stat_t;
 
 char *io_fixhome(const char *path) {
-  char *var = getenv("HOME");
-  if (!var)
-    return NULL;
+  #if defined(_WIN32)
+  char var[PATH_MAX+1] = {0};
+  DWORD l = GetEnvironmentVariable("HOMEDRIVE", var, PATH_MAX);
+  GetEnvironmentVariable("HOMEPATH", var+l, PATH_MAX-l);
+  #else
+  char* var = getenv("HOME");
+  #endif
   long pos = str_ffo(path, '~');
-  if (pos != npos) {
+  if (pos != npos && var) {
     char *nstr = str_replace(path, pos, 1, var);
     return nstr;
   }
-  return (char*)str_cpy(path, npos);
+  return (char*)str_cpy(path, strlen(path));
 }
 
 char io_direxists(const char *path) {
@@ -79,12 +81,17 @@ char io_exists(const char *path) {
 }
 
 void io_mkdir(const char *path) {
+  #ifdef __unix__
   stat_t s = {0};
   char *npath = io_fixhome(path);
   if (stat(npath, &s) == -1) {
     mkdir(npath, 0755);
   }
   free(npath);
+  #elif _WIN32
+  char *npath = io_fixhome(path);
+  CreateDirectoryA(npath, NULL);
+  #endif
 }
 
 buffer_t io_read(const char *path) {
@@ -109,5 +116,3 @@ buffer_t io_read(const char *path) {
 	fclose(stream);
 	return buf;
 }
-
-#endif

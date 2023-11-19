@@ -19,7 +19,15 @@ int main(int argc, char **argv) {
   printf("%lu\n", str_hash("cyan"));
   printf("%lu\n", str_hash("bright_cyan"));*/
 
-
+  /*dirent_t **dlist = NULL;
+  int dlistc;
+  if (io_scandir("./src", &dlist, &dlistc) > 0) { 
+    if (dlistc > 0) {
+      for (int i = 0; i < dlistc; ++i) {
+        printf("%s\n", dlist[i]->d_name);
+      }
+    }
+  }*/
 
   lexer_t l = {0};
   if (argc <= 1) {
@@ -31,15 +39,6 @@ int main(int argc, char **argv) {
     printf("Could not open %s\n", argv[1]);
     return 2;
   }
-  /*dirent_t **dlist = NULL;
-  int dlistc;
-  if (io_scandir(".", &dlist, &dlistc) > 0) { 
-    if (dlistc > 0) {
-      for (int i = 0; i < dlistc; ++i) {
-        printf("%s\n", dlist[i]->d_name);
-      }
-    }
-  }*/
   char* colorp = str_colorfmt("%c(bright_magenta)Running %s\n%c(reset)", argv[1]);
   printf("%s", colorp);
   free(colorp);
