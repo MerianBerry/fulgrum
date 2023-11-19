@@ -91,6 +91,7 @@ void io_mkdir(const char *path) {
   #elif _WIN32
   char *npath = io_fixhome(path);
   CreateDirectoryA(npath, NULL);
+  free(npath);
   #endif
 }
 
