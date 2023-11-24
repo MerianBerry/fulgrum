@@ -164,8 +164,19 @@ char lx_number(lexer_t* lexer) {
     lx_save(lexer);
   } while(isdigit(lx_next(lexer)) || lexer->cc == dotex);
   if (!strcmp(lexer->ident, ".")) {
-    printf(BRTBRED "Expected a number literal, but got \".\"\n" RESET);
-    return 0;
+    int lxl = lx_peek(lexer, -2);
+    if (isalnum(lxl)||lxl=='_'||utf8_charsize(lxl)>1) {
+      lx_back(lexer);
+      lx_delete(lexer);
+      lx_save(lexer);
+      lx_next(lexer);
+      lx_addtk(lexer, '.');
+      return 2;
+    } else {
+      printf(BRTBRED "Expected a number literal, but got \".\"\n" RESET);
+      return 0;
+    }
+    
   }
   lx_addtk(lexer, tk_number);
   return 1;
@@ -215,9 +226,25 @@ int lex(lexer_t* lexer, const char* content) {
       lx_delete(lexer);
       continue;
     }
-
-    lx_oper(lexer);
+    
+    if (!lexer->cc || isnewline(lexer->cc)) {
+      lx_next(lexer);
+      continue;
+    }
+    lx_save(lexer);
+    lx_addtk(lexer, lexer->cc);
+    lx_next(lexer);
     lx_delete(lexer);
   }
   return 1;
+}
+
+void lx_freetokens(lexer_t* lexer) {
+  for (int i = 0; i < lexer->tokenc; ++i) {
+    if (lexer->tokenv[i].ident)
+      free(lexer->tokenv[i].ident);
+  }
+  free(lexer->tokenv);
+  lexer->tokenv = NULL;
+  lexer->tokenc = 0;
 }

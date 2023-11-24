@@ -17,3 +17,5 @@ typedef struct lexer_s {
 
 
 int lex(lexer_t* lexer, const char* content);
+
+void lx_freetokens(lexer_t* lexer);

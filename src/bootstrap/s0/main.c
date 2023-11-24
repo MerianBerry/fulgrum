@@ -2,6 +2,8 @@
 #define __NO_USE_TIME
 #include "include/common.h"
 #include "include/lex.h"
+#include "include/maker.h"
+#include "include/seminfo.h"
 
 int main(int argc, char **argv) {
   /*printf("%lu\n", str_hash("black"));
@@ -45,7 +47,10 @@ int main(int argc, char **argv) {
   lex(&l, content.data);
   /*printf("\033[1A");
   printf("\033[K");*/
+  //maker_t maker = {0};
+  //make(&maker, &l);
+  semanalyze(&l);
   free(content.data);
-  free(l.tokenv);
+  lx_freetokens(&l);
   return 0;
 }

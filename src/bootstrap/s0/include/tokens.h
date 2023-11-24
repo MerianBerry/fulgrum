@@ -1,7 +1,7 @@
 #pragma once
 
 enum {
-  tk_var = 1,
+  tk_var = 0x100,
   tk_func,
   tk_class,
   tk_import,

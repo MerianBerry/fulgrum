@@ -1,1 +1,7 @@
-var myvar = "Hello Mundo!"
+
+var myInt = 4
+
+var myInt2 = myInt
+
+return myInt2
+
