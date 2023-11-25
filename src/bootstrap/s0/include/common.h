@@ -207,6 +207,8 @@ buffer_t io_read(const char *path);
 
 void *mem_grow(void* src, int stride, int len, void* newData, int newDataLen);
 
+void *mem_copy(void* src, int size);
+
 double minf(double x, double y);
 
 double maxf(double x, double y);

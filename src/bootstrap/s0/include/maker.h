@@ -1,6 +1,7 @@
 #pragma once
 
 typedef struct lexer_s lexer_t;
+typedef struct seminfo_s seminfo_t;
 
 typedef struct symbol_s {
   char*           name;
@@ -14,6 +15,7 @@ typedef struct relocation_s {
 
 typedef struct maker_s {
   lexer_t*        lexer;
+  seminfo_t*      seminfo;
   char*           code;
   int             csize;
   char*           data;
@@ -24,4 +26,4 @@ typedef struct maker_s {
   int             relocc;
 } maker_t;
 
-int make(maker_t* maker, lexer_t* lexer);
+int make(lexer_t* lexer);

@@ -23,7 +23,9 @@ enum {
   tk_oper,
 };
 
-typedef struct {
+typedef struct token_s {
   char*       ident;
   short       tk;
+  int         col;
+  int         ln;
 } token_t;

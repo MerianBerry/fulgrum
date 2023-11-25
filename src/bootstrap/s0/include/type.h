@@ -1,6 +1,11 @@
 #pragma once
 
 typedef struct {
-  short     id;
-  short     size;
+  const char*   name;
+  short         id;
+  short         size;
 } type_t;
+
+int defaultTypesAmmount();
+
+type_t* findDefaultType(const char* tname);

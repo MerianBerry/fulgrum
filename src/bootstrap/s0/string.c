@@ -393,9 +393,16 @@ int clampi(int x, int y, int z) {
 
 void *mem_grow(void* src, int stride, int len, void* newData, int newDataLen) {
   void* buf = malloc(stride*(len+newDataLen));
+	memset(buf, 0, stride*(len+newDataLen));
   memcpy(buf, src, stride*len);
   memcpy((char*)buf + stride*len, newData, stride*newDataLen);
   if (src)
     free(src);
-  return src;
+  return buf;
+}
+
+void *mem_copy(void* src, int size) {
+	void* pb = malloc(size);
+	memcpy(pb, src, size);
+	return pb;
 }

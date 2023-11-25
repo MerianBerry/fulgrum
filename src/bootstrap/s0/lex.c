@@ -1,17 +1,27 @@
+#include "include/tokens.h"
 #include "include/lex.h"
 #include <ctype.h>
 #include <stdio.h>
 #define NO_DIRENT
 #include "include/common.h"
+#include "include/error.h"
 
-#define BRTBRED "\x1B[91;1m"
-#define RESET "\x1B[0m"
+#define validopc(c) (str_ffo("~+-*/!@$%%^&*[]<>|=", (char)c) != npos)
+
+#define isnewline(c) (c == '\n' || c == '\r')
+#define noteof(c) (c != EOF)
+#define validc(c) (!c && c != EOF)
 
 int lx_next(lexer_t *lexer) {
   if (lexer->indx+1 >= lexer->size) {
     lexer->indx = lexer->size;
     lexer->cc = EOF;
     return EOF;
+  }
+  ++lexer->ccol;
+  if (isnewline(lexer->cc)) {
+    lexer->ccol = 1;
+    ++lexer->cln;
   }
   lexer->cc = lexer->content[++lexer->indx];
   return lexer->cc;
@@ -39,6 +49,11 @@ int lx_back(lexer_t* lexer) {
     lexer->cc = 0;
     return 0;
   }
+  int lc = lx_peek(lexer, -1);
+  if (isnewline(lc)) {
+    --lexer->cln;
+    lexer->ccol = strlen(lexer->linev[lexer->cln-1])+1;
+  }
   lexer->cc = lexer->content[--lexer->indx];
   return lexer->cc;
 }
@@ -54,22 +69,23 @@ void lx_delete(lexer_t* lexer) {
   lexer->ident = NULL;
 }
 
-#define validopc(c) (str_ffo("~+-*/!@$%%^&*[]<>|=", (char)c) != npos)
-
-#define isnewline(c) (c == '\n' || c == '\r')
-#define noteof(c) (c != EOF)
-#define validc(c) (!c && c != EOF)
+void lx_reset(lexer_t* lexer) {
+  lexer->cc = 0;
+  lexer->ccol = 1;
+  lexer->cln = 1;
+  lx_delete(lexer);
+  lexer->indx = -1;
+  lx_freeTokens(lexer);
+}
 
 void lx_addtk(lexer_t* lexer, short tk) {
   token_t t = {0};
   t.ident = (char*)str_cpy(lexer->ident, npos);
   t.tk = tk;
-  token_t *nts = malloc(sizeof(token_t)*(lexer->tokenc+1));
-  memcpy(nts, lexer->tokenv, sizeof(token_t)*lexer->tokenc);
-  if (lexer->tokenv)
-    free(lexer->tokenv);
-  memcpy(nts+lexer->tokenc, &t, sizeof(token_t));
-  lexer->tokenv = nts;
+  t.col = lexer->ccol;
+  t.ln = lexer->cln;
+  lexer->tokenv = mem_grow(lexer->tokenv, sizeof(token_t), 
+    lexer->tokenc, &t, 1);
   ++lexer->tokenc;
 }
 
@@ -126,7 +142,7 @@ char lx_string(lexer_t* lexer) {
     lx_next(lexer);
   }
   if (!noteof(lexer->cc)) {
-    printf(BRTBRED "String literal extends to EOF\n" RESET);
+    stdError("String literal extends to EOF\n");
     return 0;
   }
   lx_addtk(lexer, tk_str);
@@ -166,14 +182,13 @@ char lx_number(lexer_t* lexer) {
   if (!strcmp(lexer->ident, ".")) {
     int lxl = lx_peek(lexer, -2);
     if (isalnum(lxl)||lxl=='_'||utf8_charsize(lxl)>1) {
-      lx_back(lexer);
       lx_delete(lexer);
       lx_save(lexer);
       lx_next(lexer);
       lx_addtk(lexer, '.');
       return 2;
     } else {
-      printf(BRTBRED "Expected a number literal, but got \".\"\n" RESET);
+      stdError("Expected a number literal, but got \".\"\n");
       return 0;
     }
     
@@ -186,6 +201,23 @@ char lx_number(lexer_t* lexer) {
 int lex(lexer_t* lexer, const char* content) {
   lexer->content = content;
   lexer->size = strlen(content);
+  lx_reset(lexer);
+  while (lexer->cc != EOF) {
+    lx_next(lexer);
+    if (noteof(lexer->cc))
+      lx_save(lexer);
+    else
+      break;
+    if (isnewline(lexer->cc)) {
+      const char* cpy = str_cpy(lexer->ident, npos);
+      lexer->linev = mem_grow(lexer->linev, sizeof(const char*), 
+        lexer->linec, &cpy, 1);
+      lx_delete(lexer);
+      ++lexer->linec;
+    }
+  }
+  lx_reset(lexer);
+
   while (1) {
     while (isspace(lexer->cc)) {
       lx_next(lexer);
@@ -239,7 +271,7 @@ int lex(lexer_t* lexer, const char* content) {
   return 1;
 }
 
-void lx_freetokens(lexer_t* lexer) {
+void lx_freeTokens(lexer_t* lexer) {
   for (int i = 0; i < lexer->tokenc; ++i) {
     if (lexer->tokenv[i].ident)
       free(lexer->tokenv[i].ident);
@@ -247,4 +279,16 @@ void lx_freetokens(lexer_t* lexer) {
   free(lexer->tokenv);
   lexer->tokenv = NULL;
   lexer->tokenc = 0;
+}
+
+void lx_freeLexer(lexer_t* lexer) {
+  lx_freeTokens(lexer);
+  if (lexer->linev) {
+    for (int i = 0; i < lexer->linec; ++i) {
+      free((void*)lexer->linev[i]);
+    }
+    free((void*)lexer->linev);
+    lexer->linev = NULL;
+    lexer->linec = 0;
+  }
 }
