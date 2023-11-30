@@ -1,11 +1,8 @@
 #include <stdio.h>
-#define __NO_USE_TIME
-#include "include/common.h"
-#include "include/lex.h"
-#include "include/maker.h"
-#include "include/error.h"
 
-int main(int argc, char **argv) {
+#include "lib/bootstrap/include/fulgrum.h"
+
+int main (int argc, char** argv) {
   /*printf("%lu\n", str_hash("black"));
   printf("%lu\n", str_hash("bright_black"));
   printf("%lu\n", str_hash("red"));
@@ -23,40 +20,18 @@ int main(int argc, char **argv) {
 
   /*dirent_t **dlist = NULL;
   int dlistc;
-  if (io_scandir("./src", &dlist, &dlistc) > 0) { 
+  if (io_scandir("./src", &dlist, &dlistc) > 0) {
     if (dlistc > 0) {
       for (int i = 0; i < dlistc; ++i) {
         printf("%s\n", dlist[i]->d_name);
       }
     }
   }*/
-
-  lexer_t l = {0};
-  l.fpath = argv[1];
   if (argc <= 1) {
-    printf("you stupid give an argument\n");
+    printf ("you stupid give an argument\n");
     return 1;
   }
-  buffer_t content = io_read(argv[1]);
-  if (!content.data) {
-    printf("Could not open %s\n", argv[1]);
-    return 2;
-  }
-  
-  char* colorp = str_colorfmt("%c(green)Compiling %s\n%c(reset)", argv[1]);
-  printf("%s", colorp);
-  free(colorp);
-  lex(&l, content.data);
-  /*printf("\033[1A");
-  printf("\033[K");*/
-  if (make(&l)) {
-    free(content.data);
-    lx_freeLexer(&l);
-    stdError("Failed to compile %s. Abort\n", argv[1]);
-    return 1;
-  }
-  //semanalyze(&l);
-  free(content.data);
-  lx_freeLexer(&l);
+
+  ful_import (argv[1]);
   return 0;
 }

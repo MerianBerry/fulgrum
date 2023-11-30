@@ -1,0 +1,25 @@
+
+var myInt: int = 4
+
+var myInt2: int = myInt + 2
+
+return myInt + myInt2
+
+-*
+  push rbp
+  mov rbp, rsp
+
+  sub rsp, 8
+  mov dword [rbp-4], 4
+  mov dword [rbp-8], [rbp-4]
+  add dword [rbp-8], 2
+
+  mov eax, [rbp-4]
+  add eax, [rbp-8]
+
+  add rsp, 8
+
+  mov rsp, rbp
+  pop rbp
+  ret
+*-

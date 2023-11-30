@@ -1,6 +1,0 @@
-
-var myInt: int = 4
-
-var myInt2: int = myInt + 2
-
-return myInt + myInt2
