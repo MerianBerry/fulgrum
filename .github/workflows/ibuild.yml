@@ -1,0 +1,32 @@
+name: Interpreter build
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # Typical Ubuntu job
+  ubuntu:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Default actions stuff
+    - uses: actions/checkout@v3
+    # Apt actions
+    # - uses: awalsh128/cache-apt-pkgs-action@latest
+
+
+    # Who needs clang-format when the makefile just wont use it
+    # if it doesnt exist?
+    # - name: Configure
+    #  # Install clang-format
+    #  run: sudo apt install clang-format
+
+    # No configuration required
+    # All dependencies are now installed
+    # (aka just a C compiler and a C standard library)
+    - name: Build
+      # Run the build command
+      run: make

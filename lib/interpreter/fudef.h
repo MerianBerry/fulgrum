@@ -26,6 +26,7 @@ enum {
   tk_oper,
 };
 
+typedef unsigned char  fu_byte;
 typedef unsigned short fu_word;
 typedef unsigned int   fu_dword;
 
@@ -67,12 +68,14 @@ typedef struct fu_type {
 
 typedef struct fu_varInfo {
   char const* name;
-  fu_type*    type;
-  int         uses;
-  int         pos;
+  fu_type**   typev;
+  fu_dword    typec;
+  fu_dword    uses;
+  fu_dword    pos;
 } fu_varInfo;
 
 typedef struct fu_semInfo {
+  fu_lexer const*    lex;
   fu_varInfo*        varv;
   struct fu_semInfo* semv;
   fu_type**          typev;

@@ -93,6 +93,7 @@ void lx_addtk (fu_lexer* lexer, short tk) {
 }
 
 char lx_alpha (fu_lexer* lexer) {
+  fu_dword         i;
   const fu_keyword keywords[] = {
     MAKE_KEYWORD(var),
     MAKE_KEYWORD(func),
@@ -115,7 +116,7 @@ char lx_alpha (fu_lexer* lexer) {
     lx_next (lexer);
   } while (isalnum (lexer->cc) ||
            (utf8_charsize (lexer->cc) > 1 && validc (lexer->cc)));
-  for (int i = 0; i < sizeof (keywords) / sizeof (fu_keyword); ++i) {
+  for (i = 0; i < sizeof (keywords) / sizeof (fu_keyword); ++i) {
     if (!strcmp (keywords[i].word, lexer->ident)) {
       lx_addtk (lexer, keywords[i].tk);
       return 2;
@@ -234,14 +235,14 @@ int ful_lex (fu_lexer* lexer, char const* content) {
 
 
     if (isalpha (lexer->cc) || utf8_charsize (lexer->cc) > 1) {
-      // Alpha (ident)
+      /* Alpha (ident) */
       lx_alpha (lexer);
       lx_delete (lexer);
       continue;
     }
 
     if (lexer->cc == '\"' || lexer->cc == '`') {
-      // String literal
+      /* String literal */
       lx_string (lexer);
       lx_delete (lexer);
       continue;
@@ -254,7 +255,7 @@ int ful_lex (fu_lexer* lexer, char const* content) {
     }
 
     if (lexer->cc == '-') {
-      // Comment?
+      /* Comment? */
       lx_comment (lexer);
       lx_delete (lexer);
       continue;
@@ -279,8 +280,9 @@ int ful_lex (fu_lexer* lexer, char const* content) {
 }
 
 void ful_freeTokens (fu_lexer* lexer) {
+  fu_dword i;
   if (lexer->tokenv) {
-    for (int i = 0; i < lexer->tokenc; ++i) {
+    for (i = 0; i < lexer->tokenc; ++i) {
       if (lexer->tokenv[i].ident)
         free (lexer->tokenv[i].ident);
     }
@@ -291,9 +293,10 @@ void ful_freeTokens (fu_lexer* lexer) {
 }
 
 void ful_freeLexer (fu_lexer* lexer) {
+  fu_dword i;
   ful_freeTokens (lexer);
   if (lexer->linev) {
-    for (int i = 0; i < lexer->linec; ++i) {
+    for (i = 0; i < lexer->linec; ++i) {
       free ((void*)lexer->linev[i]);
     }
     free ((void*)lexer->linev);

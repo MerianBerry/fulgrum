@@ -14,17 +14,17 @@
 #pragma region "AVL"
 
 int avl_height (avl_node_t *base) {
-  if (!base) // If base is NULL, return no height
+  if (!base) /* If base is NULL, return no height */
     return 0;
   int count = 1;
 
   int left  = 0;
   int right = 0;
-  // Find left
+  /* Find left */
   if (!!base->left) {
     left = avl_height (base->left);
   }
-  // Find right
+  /* Find right */
   if (!!base->right) {
     right = avl_height (base->right);
   }
@@ -81,14 +81,14 @@ void avl_balance (avl_tree_t *bintree, avl_node_t *base) {
   while (X) {
     rootswitch  = X == bintree->root;
     int balance = avl_findbalance (X);
-    if (balance <= -2) // Left child
+    if (balance <= -2) /* Left child */
     {
       avl_node_t *Z    = X->left;
       int         bal2 = avl_findbalance (Z);
-      if (bal2 <= 0) // Right rotation
+      if (bal2 <= 0) /* Right rotation */
       {
         avl_rightrot (X, Z);
-      } else // Left Right rotation
+      } else /* Left Right rotation */
       {
         avl_node_t *Y = Z->right;
         avl_leftrot (Z, Y);
@@ -98,10 +98,10 @@ void avl_balance (avl_tree_t *bintree, avl_node_t *base) {
     } else if (balance >= 2) {
       avl_node_t *Z    = X->right;
       int         bal2 = avl_findbalance (Z);
-      if (bal2 > 0) // Left rotation
+      if (bal2 > 0) /* Left rotation */
       {
         avl_leftrot (X, Z);
-      } else // Right Left rotation
+      } else /* Right Left rotation */
       {
         avl_node_t *Y = Z->left;
         avl_rightrot (Z, Y);
@@ -149,7 +149,7 @@ avl_node_t *avl_find (avl_tree_t *bintree, char const *key) {
         itr = itr->left;
         continue;
       }
-    } else // cmp is > 0
+    } else /* cmp is > 0 */
     {
       if (!!itr->right) {
         itr = itr->right;
@@ -183,7 +183,7 @@ void avl_append (avl_tree_t *bintree, char const *key, void *mem) {
       }
       avl_create (bintree, &itr->left, itr, key, mem);
       return;
-    } else // cmp is > 0
+    } else /* cmp is > 0 */
     {
       if (!!itr->right) {
         itr = itr->right;

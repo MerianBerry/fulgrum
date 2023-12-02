@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "lib/bootstrap/include/fulgrum.h"
+#include "lib/interpreter/include/fulgrum.h"
 
 int main (int argc, char** argv) {
   /*printf("%lu\n", str_hash("black"));

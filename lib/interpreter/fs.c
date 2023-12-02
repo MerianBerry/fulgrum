@@ -98,8 +98,9 @@ void io_mkdir (char const *path) {
 buffer_t io_read (char const *path) {
   if (!path)
     return (buffer_t){NULL, 0};
-  char *fp     = io_fixhome (path);
-  FILE *stream = fopen (fp, "r");
+  size_t i;
+  char  *fp     = io_fixhome (path);
+  FILE  *stream = fopen (fp, "r");
   if (!stream) {
     free (fp);
     return (buffer_t){NULL, 0};
@@ -110,7 +111,7 @@ buffer_t io_read (char const *path) {
   buf.data        = malloc (strlen);
   buf.size        = strlen;
   fseek (stream, 0, SEEK_SET);
-  for (size_t i = 0; i < (size_t)strlen; ++i) {
+  for (i = 0; i < (size_t)strlen; ++i) {
     ((char *)buf.data)[i] = getc (stream);
   }
   free (fp);

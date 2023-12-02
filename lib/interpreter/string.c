@@ -43,7 +43,8 @@ char *str_substr (char const *src, size_t off, size_t len) {
 }
 
 size_t str_ffo (char const *str, char c) {
-  for (size_t i = 0; i < strlen (str); ++i) {
+  size_t i;
+  for (i = 0; i < strlen (str); ++i) {
     if (str[i] == c)
       return i;
   }
@@ -51,7 +52,8 @@ size_t str_ffo (char const *str, char c) {
 }
 
 size_t str_flo (char const *str, char c) {
-  for (int i = strlen (str) - 1; i >= 0; --i) {
+  long i;
+  for (i = strlen (str) - 1; i >= 0; --i) {
     if (str[i] == c)
       return i;
   }
@@ -59,11 +61,13 @@ size_t str_flo (char const *str, char c) {
 }
 
 size_t str_flox (char const *str, char const *cs) {
-  for (int i = strlen (str) - 1; i >= 0; --i) {
-    for (size_t i2 = 0; i2 < strlen (cs); ++i2) {
+  long   i1;
+  size_t i2;
+  for (i1 = strlen (str) - 1; i1 >= 0; --i1) {
+    for (i2 = 0; i2 < strlen (cs); ++i2) {
       char c = cs[i2];
-      if (str[i] == c)
-        return i;
+      if (str[i1] == c)
+        return i1;
     }
   }
   return npos;
@@ -73,12 +77,12 @@ size_t str_ffi (char const *str, char const *cmp) {
   if (!str || !cmp) {
     return npos;
   }
+  size_t     i;
   long const l1 = strlen (str);
   long const l2 = strlen (cmp);
-  // printf("\n\t%li : %li\n", l1, l2);
   if (!l1 || !l2)
     return npos;
-  for (size_t i = 0; i < l1 - (l2 - 1); ++i) {
+  for (i = 0; i < l1 - (l2 - 1); ++i) {
     char *sub = (char *)str_substr (str, i, l2);
     if (!strcmp (sub, cmp)) {
       free (sub);
@@ -92,11 +96,12 @@ size_t str_ffi (char const *str, char const *cmp) {
 size_t str_fli (char const *str, char const *cmp) {
   if (!strlen (cmp))
     return npos;
-  size_t s1 = strlen (str);
-  size_t s2 = strlen (cmp);
+  long         i;
+  const size_t s1 = strlen (str);
+  const size_t s2 = strlen (cmp);
   if (s2 > s1)
     return npos;
-  for (int i = s1 - (s2); i >= 0; --i) {
+  for (i = s1 - (s2); i >= 0; --i) {
     char *sub = (char *)str_substr (str, i, s2);
     if (!strcmp (sub, cmp)) {
       free (sub);
@@ -116,7 +121,7 @@ unsigned long str_hash (char const *str) {
   return hash;
 }
 
-// Str fmting based off of lua fmt function
+/* Str fmting based off of lua fmt function */
 char *str_fmtv (char const *fmt, va_list args) {
   char        *buf   = NULL;
   char const  *e     = NULL;
@@ -128,12 +133,12 @@ char *str_fmtv (char const *fmt, va_list args) {
     len        = buf ? strlen (buf) : 0;
     int extr   = 0;
     switch (*(e + 1)) {
-    case 's': { // String
+    case 's': { /* String */
       char const *s = va_arg (args, char *);
       buf           = str_append (buf, (s) ? s : "(null)", -1);
       break;
     }
-    case 'c': { // Character
+    case 'c': { /* Character */
       char c = (char)va_arg (args, int);
       buf    = str_append (buf, &c, 1);
       break;
@@ -146,7 +151,7 @@ char *str_fmtv (char const *fmt, va_list args) {
       buf = str_append (buf, nbuf, -1);
       break;
     }
-    case 'i': { // 32 bit integer
+    case 'i': { /* 32 bit integer */
       int  n = va_arg (args, int);
       int  l = snprintf (NULL, 0, "%i", n) + 1;
       char numbuf[l];
@@ -154,8 +159,8 @@ char *str_fmtv (char const *fmt, va_list args) {
       buf = str_append (buf, numbuf, -1);
       break;
     }
-    case 'l': { // 64 bit integer
-      if (*(e + 2) == 'u') { // long unsigned
+    case 'l': { /* 64 bit integer */
+      if (*(e + 2) == 'u') { /* long unsigned */
         unsigned long n = va_arg (args, unsigned long);
         int           l = snprintf (NULL, 0, "%lu", n) + 1;
         char          numbuf[l];
@@ -172,7 +177,7 @@ char *str_fmtv (char const *fmt, va_list args) {
       buf = str_append (buf, numbuf, -1);
       break;
     }
-    case 'f': { // 64 bit float
+    case 'f': { /* 64 bit float */
       double n = va_arg (args, double);
       int    l = snprintf (NULL, 0, "%lf", n) + 1;
       char   numbuf[l];
@@ -180,7 +185,7 @@ char *str_fmtv (char const *fmt, va_list args) {
       buf = str_append (buf, numbuf, -1);
       break;
     }
-    case 'd': { // 64 bit float
+    case 'd': { /* 64 bit float */
       double n = va_arg (args, double);
       int    l = snprintf (NULL, 0, "%lf", n) + 1;
       char   numbuf[l];
@@ -188,7 +193,7 @@ char *str_fmtv (char const *fmt, va_list args) {
       buf = str_append (buf, numbuf, -1);
       break;
     }
-    case 'u': { // Possible long unsigned
+    case 'u': { /* Possible long unsigned */
       unsigned int n = va_arg (args, unsigned int);
       int          l = snprintf (NULL, 0, "%u", n) + 1;
       char         numbuf[l];
@@ -231,7 +236,6 @@ char *str_append (char *src, char const *nstr, size_t bytes) {
   const size_t l2  = MIN (strlen (nstr), bytes);
   char        *buf = malloc (l + l2 + 1);
   memset (buf, 0, l + l2 + 1);
-  // memset(buf, 0, l+l2+1);
   if (src) {
     memcpy (buf, src, l);
     free (src);
@@ -273,7 +277,7 @@ char *str_colorfmt (char const *src, ...) {
           itr, cpy);
       break;
     }
-    size_t p = str_ffi (cpy, "%c");
+    size_t p = str_ffi (cpy, "&c");
     if (p == npos)
       break;
     if (((p > 0 && cpy[p - 1] != '\\') || !p) && cpy[p + 2] == '(') {
@@ -309,7 +313,6 @@ char *str_colorfmt (char const *src, ...) {
     ++itr;
   }
   if (itr < 100) {
-    // printf("\n\t%s\n", cpy);
     char *fmtstr = str_fmtv (cpy, args);
     free (cpy);
     va_end (args);

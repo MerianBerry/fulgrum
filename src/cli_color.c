@@ -1,6 +1,6 @@
 #include <stdio.h>
 #define NO_DIRENT
-#include "lib/bootstrap/common.h"
+#include "lib/interpreter/common.h"
 
 char escapec (char c) {
   switch (c) {
@@ -24,10 +24,12 @@ int main (int argc, char** argv) {
     printf ("Not enough arguments\n");
     return 1;
   }
-  for (int i = 1; i < argc; ++i) {
-    char* cpy  = str_colorfmt (argv[i]);
+  uint32_t i1;
+  uint32_t i2;
+  for (i1 = 1; i1 < argc; ++i1) {
+    char* cpy  = str_colorfmt (argv[i1]);
     char* fcpy = NULL;
-    for (int i2 = 0; i2 < strlen (cpy); ++i2) {
+    for (i2 = 0; i2 < strlen (cpy); ++i2) {
       if (cpy[i2] == '\\') {
         char ec = escapec (cpy[i2 + 1]);
         if (ec > 0) {
@@ -38,7 +40,7 @@ int main (int argc, char** argv) {
       }
       fcpy = str_append (fcpy, cpy + i2, 1);
     }
-    printf ("%s", fcpy);
+    printf ("%s\n", fcpy);
     free (cpy);
     free (fcpy);
   }
