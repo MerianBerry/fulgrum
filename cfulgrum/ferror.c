@@ -1,9 +1,12 @@
-#define NO_DIRENT
-#include "fuerror.h"
+#define HYDROGEN_STRING
+#define HYDROGEN_MATH
+#include "ferror.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "common.h"
+#include "hydrogen/hydrogen.h"
 
 int const peekc = 15;
 
@@ -18,22 +21,22 @@ void stdError (char const* fmt, ...) {
   va_end (args);
 }
 
-void detailedError (fu_lexer const* l, fu_token const* t, char const* fmt,
-                    ...) {
+void detailedError (Lexer const* l, Token const* t, char const* fmt, ...) {
   if (!l || !t) {
     stdError ("Lexer or token pointer is null. Cannot make detailed error\n");
     return;
   }
-  if (t->ln >= l->linec) {
-    stdError ("Token line number is too large. %i / %i\n", t->ln + 1, l->linec);
+  if (t->line >= l->linec) {
+    stdError ("Token line number is too large. %i / %i\n", t->line + 1,
+              l->linec);
     return;
   }
   va_list args;
   va_start (args, fmt);
-  fu_dword    i;
-  char const* tline   = l->linev[t->ln - 1];
+  uInt        i;
+  char const* tline   = l->linev[t->line - 1];
   int         l0      = strlen (tline);
-  int         l1      = strlen (t->ident);
+  int         l1      = t->len;
   int         off     = clampi (t->col - 1 - peekc - l1, 0, l0 - 1);
   int         len     = clampi (l1 + peekc * 2, 0, l0 - 1 - off);
   char const* content = str_substr (tline, off, len);
@@ -66,22 +69,22 @@ void stdWarning (char const* fmt, ...) {
   va_end (args);
 }
 
-void detailedWarning (fu_lexer const* l, fu_token const* t, char const* fmt,
-                      ...) {
+void detailedWarning (Lexer const* l, Token const* t, char const* fmt, ...) {
   if (!l || !t) {
     stdError ("Lexer or token pointer is null. Cannot make detailed warning\n");
     return;
   }
-  if (t->ln >= l->linec) {
-    stdError ("Token line number is too large. %i / %i\n", t->ln + 1, l->linec);
+  if (t->line >= l->linec) {
+    stdError ("Token line number is too large. %i / %i\n", t->line + 1,
+              l->linec);
     return;
   }
   va_list args;
   va_start (args, fmt);
-  fu_dword    i;
-  char const* tline   = l->linev[t->ln - 1];
+  uInt        i;
+  char const* tline   = l->linev[t->line - 1];
   int         l0      = strlen (tline);
-  int         l1      = strlen (t->ident);
+  int         l1      = t->len;
   int         off     = clampi (t->col - 1 - peekc - l1, 0, l0 - 1);
   int         len     = clampi (l1 + peekc * 2, 0, l0 - 1 - off);
   char const* content = str_substr (tline, off, len);

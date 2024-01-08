@@ -14,9 +14,9 @@ Be aware that as this project has really just begun, lots of it is still subject
 
 ## Compiler Infrastructure
 
-The base of the compiler infrastructure is an interpreter written in ANSI C (C89). Its purpose is to interpret and run the full precompiler code written in Fulgrum, which is used to compile the same Fulgrum precompiler.
+The base of the compiler infrastructure is an interpreter written in C99. Its purpose is to interpret and run the full precompiler code written in Fulgrum, which is used to compile the same Fulgrum precompiler.
 
-`C Interpreter -> Fulgrum Compiler -> Fulgrum Compiler -> Compiler Binary`
+`C Interpreter (runs)-> Fulgrum Compiler (compiles)-> Fulgrum Compiler -> Compiler Binary`
 
 The C Interpreter is written with an API, so any C/C++ code can `#include` the [*API header*](lib/bootstrap/include/fulgrum.h), and link the interpreter, and run Fulgrum code from their C programs (this is how the C interpeter will work, using the [*driver C file*](src/bootstrap/driver.c)).
 
@@ -26,6 +26,4 @@ Another precomplication function the compiler will have, is compilation into non
 
 ### Voltaic
 
-Voltaic is the build system and package manager (so to speak), and is written in ANSI C. Is purpose is to make sure user source code is compiled for the desired target and format, and to have the required packages. The configuration file will be in the `.toml` format.
-
-How Voltaic will get packages, is through git. So packages on github or probably gitlab will be able to downloaded and managed by the package manager. I am just guessing that using the `git` command is enough or using a git library will work.
+Voltaic is the build system and package manager (so to speak), and is written in C99. Is purpose is to make sure user source code is compiled for the desired target and format, and to have the required packages. The configuration file will be in the `.toml` format.

@@ -1,3 +1,10 @@
 build
 .vscode
-CMakeLists.txt
+*.o
+*.a
+*.lib
+*.dll
+*.exe
+
+lib/fuseminfo.c
+lib/fuseminfo.h
